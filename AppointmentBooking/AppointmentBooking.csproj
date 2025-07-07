@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\" />
     <Folder Include="src\Application\Common\Specifications\" />
-    <Folder Include="src\Infrastructure\Persistence\Configurations\" />
     <Folder Include="src\WebApi\Filters\" />
   </ItemGroup>
 

@@ -18,6 +18,7 @@ public class CreateAppointmentCommand : IRequest<Guid>
     public TimeOnly StartTime { get; set; }
     public TimeOnly EndTime { get; set; }
 
+    //if it is repeats or not
     public bool IsRecurring { get; set; }
     public string? RecurrenceRule { get; set; }
     public Guid? ParentAppointmentId { get; set; }
@@ -48,6 +49,7 @@ public class CreateAppointmentHandler : IRequestHandler<CreateAppointmentCommand
         if (request.AppointmentDate > now.AddMonths(3))
             throw new Exception("Appointments can’t be booked more than 3 months ahead.");
 
+        // it check other existing appointments 
         bool overlaps = await _context.Appointments
             .AnyAsync(a =>
                 a.ProviderId == request.ProviderId &&

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppointmentBooking.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250702114848_InitialCreate")]
+    [Migration("20250707112146_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -80,7 +80,7 @@ namespace AppointmentBooking.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("Appointment");
+                    b.ToTable("appointement", (string)null);
                 });
 
             modelBuilder.Entity("AppointmentBooking.src.Domain.Entities.BlockedTime", b =>

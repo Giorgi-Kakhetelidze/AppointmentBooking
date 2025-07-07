@@ -1,3 +1,4 @@
+using AppointmentBooking.src.Application.Appointments;
 using AppointmentBooking.src.Application.Providers.Commands.CreateProvider;
 using AppointmentBooking.src.Infrastructure;
 using FluentValidation;
@@ -18,7 +19,10 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Description = "An API for booking appointments with service providers"
     });
+
+    options.SchemaFilter<TimeOnlySchemaFilter>();
 });
+
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddValidatorsFromAssemblyContaining<ProviderValidator>();

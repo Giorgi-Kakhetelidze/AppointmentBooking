@@ -77,7 +77,7 @@ namespace AppointmentBooking.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("Appointment");
+                    b.ToTable("appointement", (string)null);
                 });
 
             modelBuilder.Entity("AppointmentBooking.src.Domain.Entities.BlockedTime", b =>

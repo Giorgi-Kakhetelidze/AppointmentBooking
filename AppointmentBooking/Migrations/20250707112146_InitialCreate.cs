@@ -28,7 +28,7 @@ namespace AppointmentBooking.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Appointment",
+                name: "appointement",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -49,9 +49,9 @@ namespace AppointmentBooking.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Appointment", x => x.Id);
+                    table.PrimaryKey("PK_appointement", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Appointment_ServiceProviders_ProviderId",
+                        name: "FK_appointement_ServiceProviders_ProviderId",
                         column: x => x.ProviderId,
                         principalTable: "ServiceProviders",
                         principalColumn: "Id",
@@ -102,8 +102,8 @@ namespace AppointmentBooking.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Appointment_ProviderId",
-                table: "Appointment",
+                name: "IX_appointement_ProviderId",
+                table: "appointement",
                 column: "ProviderId");
 
             migrationBuilder.CreateIndex(
@@ -121,7 +121,7 @@ namespace AppointmentBooking.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Appointment");
+                name: "appointement");
 
             migrationBuilder.DropTable(
                 name: "BlockedTimes");
