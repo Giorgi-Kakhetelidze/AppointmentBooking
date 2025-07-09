@@ -3,6 +3,7 @@ using System;
 using AppointmentBooking.src.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppointmentBooking.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250709111911_AddReminderSentFlag")]
+    partial class AddReminderSentFlag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,9 +32,6 @@ namespace AppointmentBooking.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("AppointmentStartUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CancellationReason")
@@ -66,12 +66,6 @@ namespace AppointmentBooking.Migrations
 
                     b.Property<string>("RecurrenceRule")
                         .HasColumnType("text");
-
-                    b.Property<bool>("ReminderDayBeforeSent")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("ReminderOneHourSent")
-                        .HasColumnType("boolean");
 
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("time without time zone");

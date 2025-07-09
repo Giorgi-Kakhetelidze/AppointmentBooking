@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace AppointmentBooking.src.Application.Appointments.Commands
+namespace AppointmentBooking.src.Application.Appointments.Commands.UpdateAppointment
 {
     public class UpdateAppointmentValidator : AbstractValidator<UpdateAppointment>
     {
@@ -17,7 +17,7 @@ namespace AppointmentBooking.src.Application.Appointments.Commands
                 .WithMessage("Start time must be before end time.");
 
             RuleFor(x => x.Status)
-                .IsEnumName(typeof(AppointmentBooking.src.Domain.Enums.AppointmentStatus), caseSensitive: false)
+                .IsEnumName(typeof(Domain.Enums.AppointmentStatus), caseSensitive: false)
                 .WithMessage("Invalid appointment status.");
         }
     }

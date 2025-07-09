@@ -25,5 +25,9 @@ namespace AppointmentBooking.src.Domain.Entities
         public DateTime UpdatedAt { get; set; }
 
         public ServiceProvider Provider { get; set; } = default!;
+        public bool ReminderOneHourSent { get; set; }
+        public bool ReminderDayBeforeSent { get; set; }
+
+
     }
 }

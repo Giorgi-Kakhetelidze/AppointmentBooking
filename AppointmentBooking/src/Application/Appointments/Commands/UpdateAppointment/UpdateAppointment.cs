@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
-namespace AppointmentBooking.src.Application.Appointments.Commands;
+namespace AppointmentBooking.src.Application.Appointments.Commands.UpdateAppointment;
 
 public class UpdateAppointment : IRequest<Unit>
 {
@@ -44,9 +44,9 @@ public class UpdateAppointmentHandler : IRequestHandler<UpdateAppointment, Unit>
         appointment.StartTime = request.StartTime;
         appointment.EndTime = request.EndTime;
 
-        if (Enum.TryParse(typeof(AppointmentBooking.src.Domain.Enums.AppointmentStatus), request.Status, true, out var status))
+        if (Enum.TryParse(typeof(Domain.Enums.AppointmentStatus), request.Status, true, out var status))
         {
-            appointment.Status = (AppointmentBooking.src.Domain.Enums.AppointmentStatus)status!;
+            appointment.Status = (Domain.Enums.AppointmentStatus)status!;
         }
         else
         {

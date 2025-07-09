@@ -4,7 +4,7 @@ using AppointmentBooking.src.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace AppointmentBooking.src.Application.Appointments.Commands;
+namespace AppointmentBooking.src.Application.Appointments.Commands.CreateAppointment;
 
 public class CreateAppointmentCommand : IRequest<Guid>
 {
@@ -43,8 +43,8 @@ public class CreateAppointmentHandler : IRequestHandler<CreateAppointmentCommand
             throw new Exception("Provider not found or inactive.");
 
         var now = DateTime.UtcNow;
-        if (request.AppointmentDate < now.AddHours(24))
-            throw new Exception("Appointments must be booked at least 24 hours in advance.");
+        //if (request.AppointmentDate < now.AddHours(24))
+        //    throw new Exception("Appointments must be booked at least 24 hours in advance.");
 
         if (request.AppointmentDate > now.AddMonths(3))
             throw new Exception("Appointments can’t be booked more than 3 months ahead.");

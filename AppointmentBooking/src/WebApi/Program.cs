@@ -1,10 +1,16 @@
 using AppointmentBooking.src.Application.Appointments;
+using AppointmentBooking.src.Application.Common.Interfaces;
 using AppointmentBooking.src.Application.Providers.Commands.CreateProvider;
+using AppointmentBooking.src.Application.WorkingHoursF.Commands.CreateWorkingHours;
 using AppointmentBooking.src.Infrastructure;
+using AppointmentBooking.src.Infrastructure.BackgroundJobs;
+using AppointmentBooking.src.Infrastructure.Email;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +35,13 @@ builder.Services.AddValidatorsFromAssemblyContaining<ProviderValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CreateProviderHandler).Assembly));
+builder.Services.AddValidatorsFromAssemblyContaining<AddWorkingHoursValidator>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddScoped<AppointmentReminderService>();
+builder.Services.AddHostedService<ReminderBackgroundService>();
+
+
 
 var app = builder.Build();
 

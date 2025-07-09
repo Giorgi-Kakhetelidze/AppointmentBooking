@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace AppointmentBooking.src.Application.Appointments.Commands;
+namespace AppointmentBooking.src.Application.Appointments.Commands.CreateAppointment;
 
 public class CreateAppointmentValidator : AbstractValidator<CreateAppointmentCommand>
 {

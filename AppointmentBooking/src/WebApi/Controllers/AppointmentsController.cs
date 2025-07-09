@@ -1,4 +1,6 @@
-﻿using AppointmentBooking.src.Application.Appointments.Commands;
+﻿using AppointmentBooking.src.Application.Appointments.Commands.CreateAppointment;
+using AppointmentBooking.src.Application.Appointments.Commands.DeleteAppointment;
+using AppointmentBooking.src.Application.Appointments.Commands.UpdateAppointment;
 using AppointmentBooking.src.Application.Appointments.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +60,13 @@ public class AppointmentsController : ControllerBase
         if (id != command.Id)
             return BadRequest("Mismatched appointment ID.");
 
+        await _mediator.Send(command);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAppointment(Guid id) { 
+        var command = new DeleteAppointment { Id =  id };
         await _mediator.Send(command);
         return NoContent();
     }

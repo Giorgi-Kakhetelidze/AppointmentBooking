@@ -1,6 +1,6 @@
-﻿namespace AppointmentBooking.src.Application.Common.Interfaces
+﻿namespace AppointmentBooking.src.Application.Common.Interfaces;
+
+public interface IEmailService
 {
-    public class IEmailService
-    {
-    }
+    Task SendEmailAsync(string to, string subject, string body);
 }

@@ -1,5 +1,4 @@
-﻿// Application/Providers/Queries/GetProvider.cs
-using AppointmentBooking.src.Application.Common.Interfaces;
+﻿using AppointmentBooking.src.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
