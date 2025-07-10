@@ -1,4 +1,6 @@
 using AppointmentBooking.src.Application.Appointments;
+using AppointmentBooking.src.Application.Appointments.Commands;
+using AppointmentBooking.src.Application.Appointments.Commands.CreateAppointment;
 using AppointmentBooking.src.Application.Common.Interfaces;
 using AppointmentBooking.src.Application.Providers.Commands.CreateProvider;
 using AppointmentBooking.src.Application.WorkingHoursF.Commands.CreateWorkingHours;
@@ -9,14 +11,14 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.OpenApi.Models;
-using System.Text.Json.Serialization;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Controllers
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// Swagger
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -29,20 +31,24 @@ builder.Services.AddSwaggerGen(options =>
     options.SchemaFilter<TimeOnlySchemaFilter>();
 });
 
-
+// App services
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddValidatorsFromAssemblyContaining<ProviderValidator>();
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(CreateProviderHandler).Assembly));
-builder.Services.AddValidatorsFromAssemblyContaining<AddWorkingHoursValidator>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
-builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddScoped<IAppointmentValidatorService, AppointmentValidatorService>();
 builder.Services.AddScoped<AppointmentReminderService>();
 builder.Services.AddHostedService<ReminderBackgroundService>();
 
+// Validators
+builder.Services.AddValidatorsFromAssemblyContaining<ProviderValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AddWorkingHoursValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateAppointmentValidator>();
+builder.Services.AddFluentValidationAutoValidation();
 
+// MediatR
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(CreateProviderHandler).Assembly));
 
+// App pipeline
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

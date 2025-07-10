@@ -1,38 +1,33 @@
-﻿using AppointmentBooking.src.Application.Common.Interfaces;
+﻿using AppointmentBooking.src.Application.Appointments.Commands;
+using AppointmentBooking.src.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
+
 namespace AppointmentBooking.src.Application.Appointments.Commands.UpdateAppointment;
 
-public class UpdateAppointment : IRequest<Unit>
+public class UpdateAppointment : AppointmentDtoBase, IRequest<Unit>
 {
     public Guid Id { get; set; }
-    public Guid ProviderId { get; set; }
-    public string CustomerName { get; set; } = string.Empty;
-    public string CustomerEmail { get; set; } = string.Empty;
-    public string CustomerPhone { get; set; } = string.Empty;
-    public DateTime AppointmentDate { get; set; }
-    public TimeOnly StartTime { get; set; }
-    public TimeOnly EndTime { get; set; }
     public string Status { get; set; } = string.Empty;
-    public bool IsRecurring { get; set; }
-    public string? RecurrenceRule { get; set; }
     public Guid? ParentAppointmentId { get; set; }
 }
 
 public class UpdateAppointmentHandler : IRequestHandler<UpdateAppointment, Unit>
 {
     private readonly IAppDbContext _context;
+    private readonly IAppointmentValidatorService _validator;
 
-    public UpdateAppointmentHandler(IAppDbContext context)
+    public UpdateAppointmentHandler(IAppDbContext context, IAppointmentValidatorService validator)
     {
         _context = context;
+        _validator = validator;
     }
 
     public async Task<Unit> Handle(UpdateAppointment request, CancellationToken cancellationToken)
     {
-        var appointment = await _context.Appointments.FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
+        await _validator.ValidateAsync(request, request.Id, cancellationToken);
 
+        var appointment = await _context.Appointments.FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
         if (appointment == null)
             throw new KeyNotFoundException($"Appointment with ID {request.Id} not found.");
 
@@ -43,24 +38,17 @@ public class UpdateAppointmentHandler : IRequestHandler<UpdateAppointment, Unit>
         appointment.AppointmentDate = request.AppointmentDate;
         appointment.StartTime = request.StartTime;
         appointment.EndTime = request.EndTime;
-
-        if (Enum.TryParse(typeof(Domain.Enums.AppointmentStatus), request.Status, true, out var status))
-        {
-            appointment.Status = (Domain.Enums.AppointmentStatus)status!;
-        }
-        else
-        {
-            throw new ArgumentException($"Invalid status value: {request.Status}");
-        }
-
         appointment.IsRecurring = request.IsRecurring;
         appointment.RecurrenceRule = request.RecurrenceRule;
         appointment.ParentAppointmentId = request.ParentAppointmentId;
         appointment.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        if (Enum.TryParse(typeof(Domain.Enums.AppointmentStatus), request.Status, true, out var status))
+            appointment.Status = (Domain.Enums.AppointmentStatus)status!;
+        else
+            throw new ArgumentException($"Invalid status value: {request.Status}");
 
+        await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }
-
 }

@@ -15,6 +15,9 @@ namespace AppointmentBooking.src.Domain.Entities
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }
         public AppointmentStatus Status { get; set; }
+        public DateTime AppointmentStartUtc { get; set; }
+        public string TimeZoneId { get; set; } = "Georgian Standard Time";
+
 
         public string? CancellationReason { get; set; }
         public bool IsRecurring { get; set; }

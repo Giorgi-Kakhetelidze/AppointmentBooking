@@ -1,0 +1,88 @@
+﻿## Ignore .NET build output
+bin/
+obj/
+out/
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vsp
+*.vspx
+*.vspscc
+*.vssscc
+*.pidb
+
+## Visual Studio Code
+.vscode/
+.history/
+
+## Rider IDE
+.idea/
+
+## Logs
+*.log
+logs/
+
+## ASP.NET Secrets
+secrets.json
+
+## Environment and config
+.env
+.env.*
+
+## App settings for development (sensitive data)
+appsettings.Development.json
+
+## Database and local settings
+*.db
+*.sqlite
+
+## Node modules (if frontend involved)
+node_modules/
+
+## npm, pnpm, yarn lock files (optional)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+## Docker
+docker-compose.override.yml
+.docker/
+
+## Coverage reports
+coverage/
+*.coverage
+*.coveragexml
+
+## Test Results
+TestResults/
+
+## Temporary files
+*.tmp
+*.temp
+
+## Others
+_ReSharper*/
+*.DotSettings.user
+*.ncrunch*
+*.orig
+
+## JetBrains Rider
+.idea/
+
+## Rider Cache
+.idea/
+*.iml
+
+## macOS
+.DS_Store
+
+## Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+## Linux
+*~
