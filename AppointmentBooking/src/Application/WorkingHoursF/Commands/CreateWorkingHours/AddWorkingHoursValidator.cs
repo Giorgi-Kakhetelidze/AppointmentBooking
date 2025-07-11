@@ -29,5 +29,24 @@ public class WorkingHoursItemValidator : AbstractValidator<WorkingHoursItem>
         RuleFor(x => x.DayOfWeek)
             .IsInEnum()
             .WithMessage("Invalid DayOfWeek");
+
+        When(x => x.BreakStart.HasValue && x.BreakEnd.HasValue, () =>
+        {
+            RuleFor(x => x.BreakStart)
+                .LessThan(x => x.BreakEnd)
+                .WithMessage("BreakStart must be earlier than BreakEnd.");
+
+            RuleFor(x => x.BreakStart)
+                .GreaterThanOrEqualTo(x => x.StartTime)
+                .WithMessage("BreakStart must be within working hours.");
+
+            RuleFor(x => x.BreakEnd)
+                .LessThanOrEqualTo(x => x.EndTime)
+                .WithMessage("BreakEnd must be within working hours.");
+        });
+
+        RuleFor(x => x)
+            .Must(x => !x.BreakStart.HasValue || !x.BreakEnd.HasValue || (x.BreakStart.HasValue && x.BreakEnd.HasValue))
+            .WithMessage("Both BreakStart and BreakEnd must be provided together.");
     }
 }

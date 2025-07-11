@@ -40,12 +40,15 @@ namespace AppointmentBooking.Migrations
                     StartTime = table.Column<TimeOnly>(type: "time without time zone", nullable: false),
                     EndTime = table.Column<TimeOnly>(type: "time without time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
+                    AppointmentStartUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TimeZoneId = table.Column<string>(type: "text", nullable: false),
                     CancellationReason = table.Column<string>(type: "text", nullable: true),
                     IsRecurring = table.Column<bool>(type: "boolean", nullable: false),
                     RecurrenceRule = table.Column<string>(type: "text", nullable: true),
                     ParentAppointmentId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsReminderSent = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,7 +91,9 @@ namespace AppointmentBooking.Migrations
                     DayOfWeek = table.Column<int>(type: "integer", nullable: false),
                     StartTime = table.Column<TimeOnly>(type: "time without time zone", nullable: false),
                     EndTime = table.Column<TimeOnly>(type: "time without time zone", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    BreakStart = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
+                    BreakEnd = table.Column<TimeOnly>(type: "time without time zone", nullable: true)
                 },
                 constraints: table =>
                 {

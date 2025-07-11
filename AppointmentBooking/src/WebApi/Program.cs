@@ -10,15 +10,16 @@ using AppointmentBooking.src.Infrastructure.Email;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Controllers
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Swagger
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -31,24 +32,23 @@ builder.Services.AddSwaggerGen(options =>
     options.SchemaFilter<TimeOnlySchemaFilter>();
 });
 
-// App services
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddScoped<IAppointmentValidatorService, AppointmentValidatorService>();
-builder.Services.AddScoped<AppointmentReminderService>();
-builder.Services.AddHostedService<ReminderBackgroundService>();
+builder.Services.AddHostedService<AppointmentReminderService>();
 
-// Validators
 builder.Services.AddValidatorsFromAssemblyContaining<ProviderValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AddWorkingHoursValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateAppointmentValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
-// MediatR
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CreateProviderHandler).Assembly));
 
-// App pipeline
+
+
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

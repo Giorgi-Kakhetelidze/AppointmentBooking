@@ -1,4 +1,6 @@
-﻿namespace AppointmentBooking.src.Domain.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace AppointmentBooking.src.Domain.Entities;
 
 public class WorkingHours
 {
@@ -9,5 +11,8 @@ public class WorkingHours
     public TimeOnly EndTime { get; set; }
     public bool IsActive { get; set; }
     public ServiceProvider Provider { get; set; } = default!;
+
+    public TimeOnly? BreakStart { get; set; }
+    public TimeOnly? BreakEnd { get; set; }
 
 }

@@ -5,7 +5,7 @@
 namespace AppointmentBooking.Migrations
 {
     /// <inheritdoc />
-    public partial class AddReminderSentFlag : Migration
+    public partial class AddCancellationReason : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

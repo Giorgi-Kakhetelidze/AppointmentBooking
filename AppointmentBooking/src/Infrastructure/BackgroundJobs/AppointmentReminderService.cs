@@ -1,62 +1,63 @@
-﻿using AppointmentBooking.src.Application.Common.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using AppointmentBooking.src.Application.Common.Interfaces;
 
 namespace AppointmentBooking.src.Infrastructure.BackgroundJobs;
 
-public class AppointmentReminderService : IReminderJob
+public class AppointmentReminderService : BackgroundService
 {
-    private readonly IAppDbContext _context;
-    private readonly IEmailService _emailService;
+    private readonly IServiceProvider _serviceProvider; 
+    private readonly ILogger<AppointmentReminderService> _logger;
 
-    public AppointmentReminderService(IAppDbContext context, IEmailService emailService)
+    public AppointmentReminderService(IServiceProvider serviceProvider, ILogger<AppointmentReminderService> logger)
     {
-        _context = context;
-        _emailService = emailService;
+        _serviceProvider = serviceProvider;
+        _logger = logger;
     }
 
-    // 👇 Implementing the interface method properly
-    public async Task ExecuteAsync(CancellationToken cancellationToken = default)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var now = DateTime.UtcNow;
-        var currentTime = TimeOnly.FromDateTime(now);
-
-        // 1-hour reminders
-        var oneHourReminders = await _context.Appointments
-            .Where(a => !a.ReminderOneHourSent &&
-                        a.AppointmentDate.Date == now.Date &&
-                        a.StartTime <= TimeOnly.FromDateTime(now.AddHours(1)) &&
-                        a.StartTime > TimeOnly.FromDateTime(now))
-            .ToListAsync(cancellationToken);
-
-        foreach (var appt in oneHourReminders)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            await _emailService.SendEmailAsync(
-                appt.CustomerEmail,
-                "Reminder: Your appointment is in 1 hour!",
-                $"Dear user, this is a reminder that your appointment is today at {appt.StartTime}."
-            );
-            appt.ReminderOneHourSent = true;
-        }
-
-        // 24-hour reminders
-        if (currentTime >= new TimeOnly(9, 0) && currentTime <= new TimeOnly(20, 0))
-        {
-            var dayBeforeReminders = await _context.Appointments
-                .Where(a => !a.ReminderDayBeforeSent &&
-                            a.AppointmentDate.Date == now.Date.AddDays(1))
-                .ToListAsync(cancellationToken);
-
-            foreach (var appt in dayBeforeReminders)
+            try
             {
-                await _emailService.SendEmailAsync(
-                    appt.CustomerEmail,
-                    "Reminder: Your appointment is tomorrow",
-                    $"Hello, just a heads-up — you have an appointment tomorrow at {appt.StartTime}."
-                );
-                appt.ReminderDayBeforeSent = true;
-            }
-        }
+                using var scope = _serviceProvider.CreateScope();
 
-        await _context.SaveChangesAsync(cancellationToken);
+                var dbContext = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+                var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+
+                var now = DateTime.UtcNow;
+                var targetStart = now.AddHours(23).AddMinutes(55);
+                var targetEnd = now.AddHours(24).AddMinutes(5);
+
+
+
+                var upcomingAppointments = await dbContext.Appointments
+                    .Where(a => a.AppointmentDate.Date == targetStart.Date
+                                && a.StartTime >= TimeOnly.FromDateTime(targetStart)
+                                && a.StartTime <= TimeOnly.FromDateTime(targetEnd))
+                    .ToListAsync(stoppingToken);
+
+                foreach (var appointment in upcomingAppointments)
+                {
+                    var email = appointment.CustomerEmail;
+                    var subject = "Appointment Reminder";
+                    var body = $"Dear {appointment.CustomerName},\n\n" +
+                               $"This is a reminder for your appointment scheduled at {appointment.StartTime} on {appointment.AppointmentDate:yyyy-MM-dd}.\n\n" +
+                               "Thank you.";
+
+                    await emailService.SendEmailAsync(email, subject, body);
+                    _logger.LogInformation($"Sent reminder email to {email} for appointment {appointment.Id}.");
+                }
+
+                await dbContext.SaveChangesAsync(stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred in AppointmentReminderService.");
+            }
+
+            await Task.Delay(TimeSpan.FromMinutes(30), stoppingToken);
+
+        }
     }
 }

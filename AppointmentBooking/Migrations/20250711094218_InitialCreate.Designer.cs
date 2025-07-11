@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppointmentBooking.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250708094440_InitialCreate")]
+    [Migration("20250711094218_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -32,6 +32,9 @@ namespace AppointmentBooking.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("AppointmentStartUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CancellationReason")
@@ -58,6 +61,9 @@ namespace AppointmentBooking.Migrations
                     b.Property<bool>("IsRecurring")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsReminderSent")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid?>("ParentAppointmentId")
                         .HasColumnType("uuid");
 
@@ -72,6 +78,10 @@ namespace AppointmentBooking.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TimeZoneId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -143,6 +153,12 @@ namespace AppointmentBooking.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<TimeOnly?>("BreakEnd")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<TimeOnly?>("BreakStart")
+                        .HasColumnType("time without time zone");
 
                     b.Property<int>("DayOfWeek")
                         .HasColumnType("integer");

@@ -58,6 +58,9 @@ namespace AppointmentBooking.Migrations
                     b.Property<bool>("IsRecurring")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsReminderSent")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid?>("ParentAppointmentId")
                         .HasColumnType("uuid");
 
@@ -66,12 +69,6 @@ namespace AppointmentBooking.Migrations
 
                     b.Property<string>("RecurrenceRule")
                         .HasColumnType("text");
-
-                    b.Property<bool>("ReminderDayBeforeSent")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("ReminderOneHourSent")
-                        .HasColumnType("boolean");
 
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("time without time zone");
@@ -153,6 +150,12 @@ namespace AppointmentBooking.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<TimeOnly?>("BreakEnd")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<TimeOnly?>("BreakStart")
+                        .HasColumnType("time without time zone");
 
                     b.Property<int>("DayOfWeek")
                         .HasColumnType("integer");

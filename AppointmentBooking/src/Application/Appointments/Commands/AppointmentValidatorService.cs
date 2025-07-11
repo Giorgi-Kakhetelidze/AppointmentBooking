@@ -1,4 +1,5 @@
 ﻿using AppointmentBooking.src.Application.Common.Interfaces;
+using AppointmentBooking.src.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppointmentBooking.src.Application.Appointments.Commands;
@@ -41,6 +42,13 @@ public class AppointmentValidatorService : IAppointmentValidatorService
         if (request.StartTime < workingHours.StartTime || request.EndTime > workingHours.EndTime)
             throw new Exception($"Appointment must be within working hours: {workingHours.StartTime} - {workingHours.EndTime}");
 
+        if (workingHours.BreakStart.HasValue && workingHours.BreakEnd.HasValue)
+        {
+            bool overlapsBreak = request.StartTime < workingHours.BreakEnd && request.EndTime > workingHours.BreakStart;
+            if (overlapsBreak)
+                throw new Exception($"Appointment overlaps with provider's break time: {workingHours.BreakStart} - {workingHours.BreakEnd}");
+        }
+
         bool overlaps = await _context.Appointments.AnyAsync(a =>
             a.Id != appointmentIdToExclude &&
             a.ProviderId == request.ProviderId &&
@@ -51,5 +59,20 @@ public class AppointmentValidatorService : IAppointmentValidatorService
 
         if (overlaps)
             throw new Exception("This time slot is already booked.");
+
+        var now = DateTime.UtcNow;
+        var appointmentDateTime = DateTime.SpecifyKind(request.AppointmentDate.Date, DateTimeKind.Utc) + request.StartTime.ToTimeSpan();
+
+        if (appointmentDateTime < now.AddHours(24))
+            throw new ArgumentException("Appointments must be booked at least 24 hours in advance.");
+
+        if (appointmentDateTime > now.AddMonths(3))
+            throw new ArgumentException("Appointments cannot be booked more than 3 months in advance.");
+
+        var duration = request.EndTime - request.StartTime;
+        var durationMinutes = (int)duration.TotalMinutes;
+
+        if (!Enum.IsDefined(typeof(AppointmentDuration), durationMinutes))
+            throw new ArgumentException("Invalid appointment duration. Allowed: 15, 30, 45, or 60 minutes.");
     }
 }
